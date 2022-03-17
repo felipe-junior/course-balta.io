@@ -1,0 +1,3 @@
+CREATE DATABASE [Curso]
+
+-- DROP DATABASE [Curso]
