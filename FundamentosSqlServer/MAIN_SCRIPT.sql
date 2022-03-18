@@ -56,8 +56,9 @@ ALTER TABLE [ProgressoCurso]
 
 ALTER TABLE [Curso] ADD 
     CONSTRAINT [FK_Curso_CategoriaId] FOREIGN KEY ([CategoriaId]) 
-        REFERENCES [Categoria] ([Id])
-
+        REFERENCES [Categoria] ([Id]) ON DELETE CASCADE
+-- ALTER TABLE [Curso] 
+--     DROP [FK_Curso_CategoriaId]
 -- INDEX 
 
 CREATE INDEX [IX_Aluno_Email] ON [Aluno] ([Email])
