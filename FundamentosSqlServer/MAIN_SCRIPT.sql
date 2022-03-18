@@ -1,8 +1,11 @@
+--RESET TABLES
 
 DROP TABLE [Aluno]
 DROP TABLE [Curso]
 DROP TABLE [Categoria]
 DROP TABLE [ProgressoCurso]
+
+-- CREATE TABLES
 
 CREATE TABLE [Aluno] (
     [Id] INT NOT NULL IDENTITY(1,1), -- AutoIncrement, começa do 1 e vai somando 1
@@ -17,15 +20,19 @@ CREATE TABLE [Aluno] (
 )
 GO
 
-CREATE INDEX [IX_Aluno_Email] ON [Aluno] ([Email])
--- DROP INDEX [IX_Aluno_Email] ON [Aluno]
-
 CREATE TABLE [Curso] (
     [Id] INT NOT NULL IDENTITY(1,1),
     [Nome] NVARCHAR(80) NOT NULL,
     [CategoriaId] INT NOT NULL,
     
     CONSTRAINT [PK_Curso_Id] PRIMARY KEY ([Id]),
+)
+GO
+
+CREATE TABLE [Categoria] (
+    [Id] INT NOT NULL IDENTITY(1,1),
+    [Nome] NVARCHAR(80) NOT NULL,
+    CONSTRAINT PK_Categoria_Id PRIMARY KEY ([Id])
 )
 GO
 
@@ -39,12 +46,7 @@ CREATE TABLE [ProgressoCurso] (
 )
 GO
 
-CREATE TABLE [Categoria] (
-    [Id] INT NOT NULL IDENTITY(1,1),
-    [Nome] NVARCHAR(80) NOT NULL,
-    CONSTRAINT PK_Categoria_Id PRIMARY KEY ([Id])
-)
-GO
+--Relationships
 
 ALTER TABLE [ProgressoCurso] 
     ADD CONSTRAINT FK_CursoId FOREIGN KEY([CursoId]) 
@@ -55,3 +57,8 @@ ALTER TABLE [ProgressoCurso]
 ALTER TABLE [Curso] ADD 
     CONSTRAINT [FK_Curso_CategoriaId] FOREIGN KEY ([CategoriaId]) 
         REFERENCES [Categoria] ([Id])
+
+-- INDEX 
+
+CREATE INDEX [IX_Aluno_Email] ON [Aluno] ([Email])
+-- DROP INDEX [IX_Aluno_Email] ON [Aluno]
