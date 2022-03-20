@@ -6,7 +6,7 @@ const string connectionString = "Server=localhost,1433;Database=balta;User ID=sa
 
 using (var connection = new SqlConnection(connectionString))
 {
-
+    
     connection.Open();
 
     // Insert(connection);
@@ -14,6 +14,7 @@ using (var connection = new SqlConnection(connectionString))
     // UpdateCategory(connection);
     // CreateManyCategory(connection);
     ExecuteProcedure(connection);
+    ReadView(connection);
 
 }
 
@@ -136,4 +137,23 @@ static void ExecuteProcedure(SqlConnection connection){
     var parameters = new {StudentId = "79b82071-80a8-4e78-a79c-92c8cd1fd052"};
     var rows = connection.Execute(procedure, parameters, commandType:  System.Data.CommandType.StoredProcedure);
     System.Console.WriteLine($"Deletou {rows} linhas");
+}
+
+static void ReadView(SqlConnection connection){
+    
+    var sql = "SELECT * FROM [vwCourses]";
+    // var courses = connection.Query<CourseDTO>(sql);
+    var courses = connection.Query(sql); //anonimo object
+
+    foreach (var course in courses)
+    {   
+        System.Console.WriteLine(course.Id);
+        System.Console.WriteLine(course.Tag);
+        System.Console.WriteLine(course.Title);
+        System.Console.WriteLine(course.Url);
+        System.Console.WriteLine(course.Summary);
+        System.Console.WriteLine(course.Category);
+        System.Console.WriteLine(course.Author);
+        System.Console.WriteLine("-----------------");
+    }
 }
