@@ -9,10 +9,11 @@ using (var connection = new SqlConnection(connectionString))
 
     connection.Open();
 
-    Insert(connection);
-    ListCategories(connection);
-    UpdateCategory(connection);
-    CreateManyCategory(connection);
+    // Insert(connection);
+    // ListCategories(connection);
+    // UpdateCategory(connection);
+    // CreateManyCategory(connection);
+    ExecuteProcedure(connection);
 
 }
 
@@ -61,8 +62,6 @@ static void ListCategories(SqlConnection connection)
     foreach (var category in categories)
         System.Console.WriteLine($"{category.Id} - {category.Title}");
 }
-
-
 
 static void CreateManyCategory(SqlConnection connection)
 {
@@ -119,6 +118,7 @@ static void CreateManyCategory(SqlConnection connection)
     });
     System.Console.WriteLine($"Inseriu {rows} linhas");
 }
+
 static void UpdateCategory(SqlConnection connection)
 {
 
@@ -129,4 +129,11 @@ static void UpdateCategory(SqlConnection connection)
         Title = "Novo"
     });
     System.Console.WriteLine($"Atualizou {rows} linhas");
+}
+
+static void ExecuteProcedure(SqlConnection connection){
+    var procedure = "sp_DeleteStudent";
+    var parameters = new {StudentId = "79b82071-80a8-4e78-a79c-92c8cd1fd052"};
+    var rows = connection.Execute(procedure, parameters, commandType:  System.Data.CommandType.StoredProcedure);
+    System.Console.WriteLine($"Deletou {rows} linhas");
 }
