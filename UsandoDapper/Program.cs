@@ -13,9 +13,10 @@ using (var connection = new SqlConnection(connectionString))
     // ListCategories(connection);
     // UpdateCategory(connection);
     // CreateManyCategory(connection);
-    ExecuteProcedure(connection);
-    ReadView(connection);
-
+    // ExecuteProcedure(connection);
+    // ReadView(connection);
+    // OneToOne(connection);
+    OneToMany(connection);
 }
 
 static void Insert(SqlConnection connection)
@@ -155,5 +156,71 @@ static void ReadView(SqlConnection connection){
         System.Console.WriteLine(course.Category);
         System.Console.WriteLine(course.Author);
         System.Console.WriteLine("-----------------");
+    }
+}
+
+static void OneToOne (SqlConnection connection){
+    var sql = @"
+    SELECT *
+    FROM
+        [CareerItem]
+    INNER JOIN
+        [Course] ON [CareerItem].[CourseId] = [Course].[Id]
+    ";
+    var careerItems = connection.Query<CareerItem, Course, CareerItem>(
+        sql, 
+        (careerItem, course)=>{
+                careerItem.course = course;
+                return careerItem;
+        }
+    ,   splitOn:"Id");
+
+    foreach (var careerItem in careerItems)
+    {
+        System.Console.WriteLine($"CareerItemId: {careerItem.CareerId}");
+        System.Console.WriteLine("CareerItemTitle: " + careerItem.Title);
+        System.Console.WriteLine(careerItem.course.Id);
+        System.Console.WriteLine(careerItem.course.Title);
+        System.Console.WriteLine("----------");
+    }
+}
+
+static void OneToMany (SqlConnection connection){
+    var sql = @"
+    SELECT
+        [Career].[Id],
+        [Career].[Title],
+        [CareerItem].[CareerId],
+        [CareerItem].[Title]
+    FROM
+        [Career]
+    INNER JOIN
+        [CareerItem] ON [CareerItem].[CareerId] = [Career].[Id]
+    ORDER BY
+        [Career].[Title]
+    ";
+
+    var careers = new List<Career>();
+    var careersListFromDb = connection.Query<Career, CareerItem, Career>(sql, (career, careerItem)=>{
+        
+        var careerTemp =  careers.Where(x => x.Id == career.Id).FirstOrDefault();
+        
+        if (careerTemp is null){
+            career.CareerItems.Add(careerItem);
+            careers.Add(career);
+        } else {
+            careerTemp.CareerItems.Add(careerItem);
+        }
+        return career;
+    }, splitOn:"CareerId");
+
+    foreach (var career in careers)
+    {
+        System.Console.WriteLine(career.Title);
+        foreach (var careerItems in career.CareerItems)
+        {
+            System.Console.WriteLine(careerItems.Title);
+        }
+        System.Console.WriteLine("------------");
     }
 }
